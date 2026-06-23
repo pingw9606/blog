@@ -1,6 +1,7 @@
 import { defineConfig } from 'vitepress'
 
 export default defineConfig({
+  base: '/blog/',
   title: '前端教程博客',
   description: 'AI 生成的前端学习笔记',
   markdown: {
