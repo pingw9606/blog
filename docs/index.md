@@ -1,9 +1,9 @@
 ---
 layout: home
 hero:
-  name: 前端教程博客
-  text: AI 生成的前端学习笔记
-  tagline: React、Next.js、Agent、SEO 等前端技术教程
+  name: woody
+  text: 技术博客
+  tagline: 全栈开发、后端运维与 AI 学习笔记与实战记录
   actions:
     - theme: brand
       text: 开始阅读

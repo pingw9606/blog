@@ -2,8 +2,8 @@ import { defineConfig } from 'vitepress'
 
 export default defineConfig({
   base: '/blog/',
-  title: '前端教程博客',
-  description: 'AI 生成的前端学习笔记',
+  title: 'woody 的博客',
+  description: 'woody 的技术学习笔记与实战记录',
   markdown: {
     config(md) {
       // 包裹所有内容为 v-pre，防止 {{ }} 被 Vue 解析
