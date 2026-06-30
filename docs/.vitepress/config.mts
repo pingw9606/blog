@@ -17,7 +17,8 @@ export default defineConfig({
     nav: [
       { text: '首页', link: '/' },
       { text: '文章', link: '/articles/React面试学习-对比Vue' },
-      { text: 'Agent教程', link: '/agent/00-课程大纲速览' }
+      { text: 'Agent教程', link: '/agent/00-课程大纲速览' },
+      { text: '后端运维笔记', link: '/backend/' }
     ],
     sidebar: {
       '/articles/': [
@@ -41,6 +42,24 @@ export default defineConfig({
             { text: '阶段二：工程化与后端', link: '/agent/02-阶段二-工程化与后端' },
             { text: '阶段三：高级RAG记忆与可观测', link: '/agent/03-阶段三-高级RAG记忆与可观测' },
             { text: '阶段四：进阶底层与综合实战', link: '/agent/04-阶段四-进阶底层与综合实战' }
+          ]
+        }
+      ],
+      '/backend/': [
+        {
+          text: '后端 & 运维学习笔记',
+          items: [
+            { text: '总览', link: '/backend/' },
+            { text: '01 服务器安全加固', link: '/backend/01-服务器安全加固' },
+            { text: '02 Linux运维-apt卡死排查', link: '/backend/02-Linux运维-apt卡死排查' },
+            { text: '03 Git与GitHub协作', link: '/backend/03-Git与GitHub协作' },
+            { text: '04 CICD与Docker部署', link: '/backend/04-CICD与Docker部署' },
+            { text: '05 全栈架构与鉴权原理', link: '/backend/05-全栈架构与鉴权原理' },
+            { text: '06 数据库选型与运维', link: '/backend/06-数据库选型与运维' },
+            { text: '07 后端查库找问题流程', link: '/backend/07-后端查库找问题流程' },
+            { text: '08 JVM调优与排查', link: '/backend/08-JVM调优与排查' },
+            { text: '09 MySQL索引优化', link: '/backend/09-MySQL索引优化' },
+            { text: '10 前端转后端学习路线图', link: '/backend/10-前端转后端学习路线图' }
           ]
         }
       ]
