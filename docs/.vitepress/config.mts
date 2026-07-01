@@ -76,7 +76,8 @@ export default defineConfig({
             { text: '05 React前端搭建', link: '/java-refactor/05-React前端搭建' },
             { text: '06 Docker与本地全栈联调', link: '/java-refactor/06-Docker与本地全栈联调' },
             { text: '07 CICD与镜像发布', link: '/java-refactor/07-CICD与镜像发布' },
-            { text: '08 HTTPS与上线', link: '/java-refactor/08-HTTPS与上线' }
+            { text: '08 HTTPS与上线', link: '/java-refactor/08-HTTPS与上线' },
+            { text: '09 老站零影响迁移与灰度切换', link: '/java-refactor/09-老站零影响迁移与灰度切换' }
           ]
         }
       ]

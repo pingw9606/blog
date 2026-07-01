@@ -154,4 +154,9 @@ image.name: ghcr.io/pingw9606/ouyang-server:main,ghcr.io/pingw9606/ouyang-server
 - **`GITHUB_TOKEN` 够用**：推 GHCR 不用自己配密码，给 job 加 `permissions: packages: write` 即可。
 - **部署用开关变量**：`DEPLOY_ENABLED` 没开就跳过，方便先把 CI/发布跑通、服务器就绪后再开部署。
 
+## 六、两个真实坑
+
+- **CPU 架构要对齐**：开发机若是 Apple Silicon（**arm64**），本地 `docker build` 出来的镜像在 **amd64** 服务器上跑不起来。所以要么用 **CI 产出的镜像**（GitHub Actions 的 `ubuntu-latest` 是 amd64），要么直接**在服务器上 build**。跨架构本地构建可用 `docker buildx --platform linux/amd64`，但用 QEMU 模拟会很慢。
+- **`docker compose` vs `docker-compose`**：前者是 Docker CLI 插件（带空格），后者是独立二进制（连字符）。不同机器装的可能不一样，脚本里别写死，先确认 `docker compose version` 能不能用。
+
 最后一步，让它能用 HTTPS 对外：[08 · HTTPS 与上线](./08-HTTPS与上线.md)。

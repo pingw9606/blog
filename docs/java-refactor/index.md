@@ -51,6 +51,7 @@
 | [06 Docker 与本地全栈联调](./06-Docker与本地全栈联调.md) | 多阶段镜像、compose、端到端验证 |
 | [07 CI/CD 与镜像发布](./07-CICD与镜像发布.md) | Actions + GHCR + SSH 自动部署 |
 | [08 HTTPS 与上线](./08-HTTPS与上线.md) | Nginx + certbot、无域名策略、CORS |
+| [09 老站零影响迁移与灰度切换](./09-老站零影响迁移与灰度切换.md) | scrypt→bcrypt 兼容、同库迁移、Flyway 基线、灰度切换回滚 |
 
 ## 相关仓库
 
