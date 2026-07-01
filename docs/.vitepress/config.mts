@@ -18,7 +18,8 @@ export default defineConfig({
       { text: '首页', link: '/' },
       { text: '文章', link: '/articles/React面试学习-对比Vue' },
       { text: 'Agent教程', link: '/agent/00-课程大纲速览' },
-      { text: '后端运维笔记', link: '/backend/' }
+      { text: '后端运维笔记', link: '/backend/' },
+      { text: '重构实战', link: '/java-refactor/' }
     ],
     sidebar: {
       '/articles/': [
@@ -60,6 +61,22 @@ export default defineConfig({
             { text: '08 JVM调优与排查', link: '/backend/08-JVM调优与排查' },
             { text: '09 MySQL索引优化', link: '/backend/09-MySQL索引优化' },
             { text: '10 前端转后端学习路线图', link: '/backend/10-前端转后端学习路线图' }
+          ]
+        }
+      ],
+      '/java-refactor/': [
+        {
+          text: '全栈重构实战（Java + React）',
+          items: [
+            { text: '系列总览', link: '/java-refactor/' },
+            { text: '01 重构总览与项目结构', link: '/java-refactor/01-重构总览与项目结构' },
+            { text: '02 Java后端搭建', link: '/java-refactor/02-Java后端搭建' },
+            { text: '03 鉴权重构 Session→JWT', link: '/java-refactor/03-鉴权重构-Session到JWT' },
+            { text: '04 数据库与Flyway迁移', link: '/java-refactor/04-数据库与Flyway迁移' },
+            { text: '05 React前端搭建', link: '/java-refactor/05-React前端搭建' },
+            { text: '06 Docker与本地全栈联调', link: '/java-refactor/06-Docker与本地全栈联调' },
+            { text: '07 CICD与镜像发布', link: '/java-refactor/07-CICD与镜像发布' },
+            { text: '08 HTTPS与上线', link: '/java-refactor/08-HTTPS与上线' }
           ]
         }
       ]
