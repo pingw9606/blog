@@ -31,7 +31,8 @@ export default defineConfig({
             { text: '前端手写代码题', link: '/articles/前端手写代码题' },
             { text: 'SEO要点总结-面试与实战', link: '/articles/SEO要点总结-面试与实战' },
             { text: 'Kiro规范接入-面试备战', link: '/articles/Kiro规范接入-面试备战' },
-            { text: 'TikTok小程序·H5改造完整指南', link: '/articles/TikTok小程序-H5改造完整指南' }
+            { text: 'TikTok小程序·H5改造完整指南', link: '/articles/TikTok小程序-H5改造完整指南' },
+            { text: 'TikTok小程序·登录与支付时序详解', link: '/articles/TikTok小程序-登录与支付时序详解' }
           ]
         }
       ],
