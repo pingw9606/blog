@@ -27,6 +27,7 @@ export default defineConfig({
           text: '前端文章',
           items: [
             { text: 'React面试学习-对比Vue', link: '/articles/React面试学习-对比Vue' },
+            { text: 'React + TypeScript 实战', link: '/articles/React-TypeScript实战' },
             { text: 'Next.js面试学习-对比Nuxt', link: '/articles/Nextjs面试学习-对比Nuxt' },
             { text: '前端手写代码题', link: '/articles/前端手写代码题' },
             { text: 'SEO要点总结-面试与实战', link: '/articles/SEO要点总结-面试与实战' },

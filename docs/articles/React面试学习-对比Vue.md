@@ -336,10 +336,188 @@ A：value 变化会让所有消费者重渲染。拆分 Context、useMemo 稳定
 
 ---
 
+## 21. 深水区：Fiber / 并发 / 性能（资深进阶）
+
+> 前面 10/11/12 节是关键词速记，这一章讲原理，面试到 P6/P7 或架构岗会往这里挖。
+
+### 21.1 Fiber 架构：到底是什么
+
+**Fiber 是一个 JS 对象**，对应一个组件（或 DOM 节点）的工作单元。每个 fiber 节点大致长这样：
+
+```text
+FiberNode {
+  type,              // 组件函数 / DOM 标签
+  key,
+  stateNode,         // 对应的真实 DOM 或组件实例
+  child, sibling, return,   // 树的三个指针：第一个子、下一个兄弟、父
+  pendingProps, memoizedProps,
+  memoizedState,     // hooks 链表就挂在这里
+  flags,             // 副作用标记（Placement/Update/Deletion）
+  lanes,             // 优先级（车道模型）
+  alternate,         // 指向另一棵树里对应的 fiber（双缓冲）
+}
+```
+
+> **关键点 1：为什么用链表而不是递归？**
+> React 15 的 Stack Reconciler 用**递归**遍历组件树，一旦开始就无法中断——大树渲染会长时间占用主线程，导致输入/动画卡顿。Fiber 把树改成**链表结构**（child/sibling/return 指针），用**循环 + 指针**遍历，可以在任意 fiber 处**暂停、保存进度、下次继续**。这就是「可中断」的基础。
+
+> **关键点 2：双缓冲（Double Buffering）**
+> 内存里同时存在两棵 fiber 树：
+> - **current 树**：当前屏幕上显示的；
+> - **workInProgress 树**：正在后台构建的新树。
+>
+> 两棵树的节点通过 `alternate` 互相指向。新树构建完成后，React 只需**切换根指针**（`current = workInProgress`），一次性替换——类似显卡的双缓冲，避免看到中间态。
+
+### 21.2 两大阶段：Render 与 Commit
+
+React 更新分两个阶段，**这是理解并发的核心**：
+
+| 阶段 | 做什么 | 能否中断 | 有无副作用 |
+|------|-------|---------|-----------|
+| **Render（协调）** | 构建 workInProgress 树、diff、打 flags 标记 | ✅ 可中断/可丢弃/可重来 | 纯计算，无 DOM 操作 |
+| **Commit（提交）** | 根据 flags 把变更一次性刷到真实 DOM | ❌ 同步、不可中断 | 操作 DOM、执行 effect |
+
+> **面试杀手锏**：
+> - 「为什么 Render 阶段的代码要保持纯函数、不能有副作用？」→ 因为 Render 阶段**可能被中断、丢弃、重复执行**。如果你在组件函数体里直接改外部变量/发请求，中断重跑时就会执行多次，产生 bug。副作用必须放进 `useEffect`（在 commit 后跑）。
+> - StrictMode 开发环境 double render 就是**故意重复 Render 阶段**，帮你揪出不纯的渲染逻辑。
+
+### 21.3 Lane 车道模型（优先级调度）
+
+React 18 用 **31 位的二进制 lanes** 表示优先级，位越靠右优先级越高：
+
+```text
+SyncLane           (最高，离散事件如 click)
+InputContinuousLane (连续事件如 drag/scroll)
+DefaultLane        (普通更新、网络请求回调)
+TransitionLanes    (startTransition 标记的，低优先级)
+IdleLane           (最低)
+```
+
+- 每次更新会被分配一条 lane；调度器按优先级决定先处理谁。
+- **高优先级可打断低优先级**：正在跑一个 transition 渲染，此时用户输入（SyncLane）进来，React 会**暂停 transition，先处理输入**，之后再回来重跑 transition。
+- 用位运算合并/判断多条 lane，极快。
+
+> 对照 Vue：Vue 的调度是基于微任务队列的 flush，没有 React 这套细粒度优先级车道。React 的复杂度换来了「大渲染不阻塞高优交互」的能力。
+
+### 21.4 时间切片（Time Slicing）怎么实现
+
+```text
+每处理完一个（或一批）fiber 单元后：
+  if (需要让出主线程) {   // shouldYield()：看这一帧还有没有时间
+     保存进度，通过调度器安排下次继续
+     让浏览器去处理输入/绘制
+  }
+```
+
+- React 有自己的 **Scheduler** 包，基于 `MessageChannel`（不是 `requestIdleCallback`，因为后者兼容性和触发频率不稳）实现宏任务级的让出。
+- 每个时间片约 **5ms**，跑完就 `shouldYield()` 检查是否让出，保证每帧（~16ms）能留出时间给浏览器绘制和响应输入，页面不卡。
+
+### 21.5 并发特性的底层：为什么 useTransition/useDeferredValue 有用
+
+```tsx
+// useTransition：把「切 tab」标记为低优先级，不阻塞输入
+const [isPending, startTransition] = useTransition();
+startTransition(() => setTab(next));   // 这次更新走 TransitionLane
+
+// useDeferredValue：延迟派生值，输入框实时、列表用「滞后」的值渲染
+const deferredQuery = useDeferredValue(query);
+const list = useMemo(() => filterHugeList(deferredQuery), [deferredQuery]);
+```
+
+- 二者本质都是把某些更新**降级到 TransitionLane**，让 SyncLane 的输入优先响应。
+- `isPending` 让你能显示「加载中」态，而旧内容仍停留（不会白屏）——这就是 **Concurrent 的"可中断+保留旧 UI"**。
+
+> **面试对比题**：`useTransition` vs `useDeferredValue`？
+> - `useTransition` 包裹**你主动触发的 setState**（有 isPending 态）；
+> - `useDeferredValue` 包裹**一个你无法控制来源的值**（比如父组件传下来的 prop），产出一个滞后版本。
+> - 都用于「区分紧急/非紧急」，选择取决于你能不能拿到那个 setState。
+
+### 21.6 Suspense 的机制
+
+```tsx
+<Suspense fallback={<Skeleton/>}>
+  <AsyncComp />    {/* 内部读取还没 ready 的资源时，会 throw 一个 Promise */}
+</Suspense>
+```
+
+- 原理：组件在 Render 阶段读取未就绪的数据时**抛出一个 Promise**，最近的 Suspense 边界捕获它、显示 fallback；Promise resolve 后重新渲染。
+- 配合 `use()`（React 19）可以在渲染中直接读 Promise。
+- Next.js 的 `loading.tsx`、RSC 流式渲染都建立在 Suspense 上。
+
+### 21.7 撕裂（Tearing）与 useSyncExternalStore
+
+> 并发渲染带来一个新问题，**外部状态库（Redux/Zustand）作者必考**：
+
+- **撕裂**：并发模式下一次渲染可能被中断、分多次进行。如果期间**外部 store 的值变了**，就可能出现「同一次渲染里，不同组件读到了 store 的不同版本」，UI 不一致——这就是 tearing。
+- **解法**：React 18 提供 `useSyncExternalStore`，强制订阅外部 store 的读取是**同步一致**的，避免撕裂。所有主流状态库现在内部都用它对接 React。
+
+```tsx
+const state = useSyncExternalStore(
+  store.subscribe,      // 订阅
+  store.getSnapshot,    // 读快照（保证一致）
+  store.getServerSnapshot  // SSR 快照
+);
+```
+
+### 21.8 性能优化：从「会用」到「懂原理」
+
+**① 定位问题再优化（不要盲目 memo）**
+- 用 **React DevTools Profiler** 录制，看每个组件的渲染耗时和「为什么渲染」（Why did this render）。
+- 关注 **wasted render**（props 没变却重渲染的组件）。
+
+**② memo 的浅比较边界**
+```tsx
+const Child = React.memo(function Child({ data, onClick }) { ... });
+// 失效场景：父组件每次渲染都传新引用
+<Child data={{ x: 1 }} onClick={() => {}} />   // ❌ 每次都是新对象/新函数 → memo 失效
+```
+解法：`useMemo` 稳定 data、`useCallback` 稳定 onClick。或自定义比较函数 `React.memo(Child, (prev, next) => ...)`。
+
+**③ 状态下沉 & 内容提升**
+- **状态下沉**：把频繁变化的 state 移到尽量小的叶子组件，缩小重渲染范围。
+- **内容提升（children as props）**：把不依赖该 state 的部分作为 `children` 传入，父 state 变化时 children 不会重渲染：
+  ```tsx
+  function Parent({ children }) {
+    const [n, setN] = useState(0);
+    return <div onClick={() => setN(n+1)}>{n}{children}</div>;
+  }
+  // children 在更上层创建，Parent 的 n 变化不会重渲染 children
+  ```
+
+**④ 虚拟列表**：长列表只渲染可视区（react-window / react-virtuoso），把 DOM 节点数从上万降到几十。
+
+**⑤ 代码分割**：`React.lazy` + `Suspense` 或路由级 dynamic import，减小首屏包体。
+
+**⑥ React Compiler（React 19，前沿加分）**
+- 官方编译器（原 React Forget）能在**构建期自动插入 memo**，自动缓存组件和值，理论上让开发者**不再手写 useMemo/useCallback**。
+- 原理：编译期分析依赖，生成等价的记忆化代码。
+- 现状：已随 React 19 逐步推广。面试提一句「未来手动 memo 会被编译器接管」很加分。
+
+### 21.9 深水区速答清单
+
+- **Fiber 是什么**：可中断的工作单元（JS 对象+链表），支持双缓冲和优先级调度。
+- **两阶段**：Render 可中断纯计算 / Commit 同步刷 DOM。副作用只能在 commit 后（useEffect）。
+- **为什么可中断**：链表遍历 + Scheduler 时间切片（~5ms 让出，基于 MessageChannel）。
+- **Lane 模型**：31 位优先级，高优打断低优。
+- **transition/deferredValue**：把更新降级到 TransitionLane，保交互优先。
+- **Suspense**：读未就绪资源时 throw Promise，边界显示 fallback。
+- **Tearing**：并发下外部 store 不一致，用 `useSyncExternalStore` 解决。
+- **优化顺序**：先 Profiler 定位 → 稳定引用（memo/useMemo/useCallback）→ 状态下沉/内容提升 → 虚拟列表/代码分割 → 未来交给 React Compiler。
+
+### 21.10 参考资料（深入原理）
+
+- [React 官方：Preserving and Resetting State](https://react.dev/learn/preserving-and-resetting-state) —— 重渲染与 state 保留
+- [acdlite/react-fiber-architecture](https://github.com/acdlite/react-fiber-architecture) —— Fiber 作者的架构说明
+- [jser.dev React 源码解析系列](https://jser.dev/) —— 深入 Fiber/Lane/调度源码
+- [React 官方：useSyncExternalStore](https://react.dev/reference/react/useSyncExternalStore) —— 撕裂与外部 store
+- [React Compiler 文档](https://react.dev/learn/react-compiler) —— 自动记忆化
+
+---
+
 ## 学习建议
 1. 先吃透 **2/3 节（useState、useEffect）**——90% 的 React 面试和 bug 都在这。
 2. 再 **10 节（重渲染&优化）+ 4 节（memo 系列）**——资深岗分水岭。
-3. **11/12 节（原理&并发）** 背关键词能讲清即可。
+3. **11/12 节（原理&并发）** 背关键词能讲清即可；冲高级/架构岗再深挖 **21 节（Fiber/并发/性能深水区）**。
 4. 最后过 **19 节 Q&A + 20 节升华回答**。
 
 > 对着本项目读：`components/search/SearchBox.tsx`（useState/useEffect/useRef/防抖/竞态/受控）、`components/drama/DramasClient.tsx`（useState/useEffect/useCallback/缓存 ref）、`components/home/BannerCarousel.tsx`（定时器 ref/自动播放/键盘事件）、`lib/track/exposure` 的 `useExposure`（自定义 hook）。
