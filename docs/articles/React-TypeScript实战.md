@@ -289,7 +289,325 @@ type A = ElementOf<string[]>;   // string
 
 ---
 
-## 9. 对照 Vue：TS 支持差异（你熟 Vue，面试可对比）
+## 9. 扩展原生 HTML 属性（组件库必备）
+
+自己封装 `<Button>`，希望它既有自定义 props，又能透传所有原生 `<button>` 属性（`onClick`、`type`、`aria-*`…）。手写不可能列全，用 `ComponentPropsWithoutRef`：
+
+```tsx
+import { ComponentPropsWithoutRef } from 'react';
+
+interface ButtonProps extends ComponentPropsWithoutRef<'button'> {
+  variant?: 'primary' | 'ghost';   // 自定义 props
+  loading?: boolean;
+}
+
+function Button({ variant = 'primary', loading, children, ...rest }: ButtonProps) {
+  return (
+    <button className={variant} disabled={loading || rest.disabled} {...rest}>
+      {loading ? '加载中…' : children}
+    </button>
+  );
+}
+
+// 使用：原生属性全部有类型提示
+<Button variant="ghost" type="submit" onClick={e => {}} aria-label="提交" />
+```
+
+> **三个相关工具类型区别（高频）**：
+> | 类型 | 含义 |
+> |------|------|
+> | `ComponentProps<'button'>` | 元素全部 props（含 ref） |
+> | `ComponentPropsWithoutRef<'button'>` | 不含 ref（**最常用**，避免 ref 冲突） |
+> | `ComponentPropsWithRef<'button'>` | 明确含 ref |
+>
+> 取「另一个组件」的 props：`ComponentProps<typeof SomeComponent>`。
+
+---
+
+## 10. 多态组件：`as` prop（设计系统核心难点）
+
+一个 `<Text>` 组件，想让调用者决定它渲染成 `<p>`、`<h1>` 还是 `<a>`，且**对应的原生属性类型也跟着变**（渲染成 `a` 时才有 `href`）。这是面试区分度极高的题：
+
+```tsx
+import { ElementType, ComponentPropsWithoutRef } from 'react';
+
+type TextProps<T extends ElementType> = {
+  as?: T;
+  children: React.ReactNode;
+} & Omit<ComponentPropsWithoutRef<T>, 'as' | 'children'>;
+
+function Text<T extends ElementType = 'span'>({ as, children, ...rest }: TextProps<T>) {
+  const Tag = as || 'span';
+  return <Tag {...rest}>{children}</Tag>;
+}
+
+// 使用：
+<Text>普通文本</Text>                          // 默认 span
+<Text as="a" href="/home">链接</Text>          // ✅ 有 href
+<Text as="button" onClick={() => {}}>按钮</Text> // ✅ 有 onClick
+// <Text as="p" href="/x" />                    // ❌ p 没有 href，报错
+```
+
+> **原理**：用泛型 `T extends ElementType` 捕获传入的标签，`ComponentPropsWithoutRef<T>` 动态取出该标签的属性集合。这是几乎所有 UI 库（Chakra、MUI、Radix）实现 `as`/`component` prop 的方式。
+
+---
+
+## 11. 互斥 Props（用可辨识联合约束非法组合）
+
+有些 props 是「二选一」的：要么传 `href`（渲染成链接），要么传 `onClick`（渲染成按钮），不能同时也不能都不传。纯 `interface` 做不到，用**联合类型**：
+
+```tsx
+type BaseProps = { children: React.ReactNode };
+type LinkProps = BaseProps & { href: string; onClick?: never };
+type ButtonProps = BaseProps & { onClick: () => void; href?: never };
+type Props = LinkProps | ButtonProps;
+
+function Clickable(props: Props) {
+  if ('href' in props) return <a href={props.href}>{props.children}</a>;
+  return <button onClick={props.onClick}>{props.children}</button>;
+}
+
+<Clickable href="/x">链接</Clickable>        // ✅
+<Clickable onClick={() => {}}>按钮</Clickable> // ✅
+// <Clickable href="/x" onClick={()=>{}} />   // ❌ 用了 never，报错
+```
+
+> **技巧**：`onClick?: never` 表示「这个分支里不允许出现 onClick」。可辨识联合 + `never` 是表达互斥 props 的标准手法。
+
+---
+
+## 12. forwardRef 与 useImperativeHandle 的类型
+
+### forwardRef 泛型标注
+
+```tsx
+import { forwardRef } from 'react';
+
+interface InputProps { label: string }
+
+// forwardRef<Ref 的类型, Props 的类型>
+const Input = forwardRef<HTMLInputElement, InputProps>(({ label }, ref) => (
+  <label>{label}<input ref={ref} /></label>
+));
+
+// 使用
+const ref = useRef<HTMLInputElement>(null);
+<Input ref={ref} label="用户名" />
+```
+> React 19 起 `ref` 可作为普通 prop，可省去 forwardRef；但面试和存量代码仍高频出现，必须会写。
+
+### useImperativeHandle：暴露自定义方法（≈ Vue defineExpose）
+
+```tsx
+interface ModalHandle {
+  open: () => void;
+  close: () => void;
+}
+
+const Modal = forwardRef<ModalHandle>((_props, ref) => {
+  const [visible, setVisible] = useState(false);
+  useImperativeHandle(ref, () => ({
+    open: () => setVisible(true),
+    close: () => setVisible(false),
+  }), []);
+  return visible ? <div className="modal">…</div> : null;
+});
+
+// 父组件
+const modalRef = useRef<ModalHandle>(null);
+modalRef.current?.open();   // 类型安全的命令式调用
+```
+
+---
+
+## 13. 类型守卫、收窄与 `satisfies`
+
+### 用户自定义类型守卫
+
+```tsx
+interface Cat { meow: () => void }
+interface Dog { bark: () => void }
+
+// 返回值 `x is Cat` = 类型谓词，收窄类型
+function isCat(animal: Cat | Dog): animal is Cat {
+  return 'meow' in animal;
+}
+
+function handle(animal: Cat | Dog) {
+  if (isCat(animal)) animal.meow();   // 这里 animal 已收窄为 Cat
+  else animal.bark();
+}
+```
+
+### `satisfies` 运算符（TS 4.9，现代必会）
+
+```tsx
+// 问题：想要类型检查，又想保留字面量的精确推导
+const config = {
+  endpoint: '/api',
+  method: 'GET',
+} satisfies { endpoint: string; method: 'GET' | 'POST' };
+
+config.method;   // 类型是 'GET'（精确），不是宽泛的 string
+// 若写成 `: {…}` 注解，method 会被拓宽成 'GET' | 'POST'
+```
+> **一句话**：`satisfies` 让你「校验一个值符合某类型，但不丢失它更窄的推导结果」。面试问「`as` / 类型注解 / `satisfies` 区别」时，这是加分答案。
+
+### `as const` 与联合类型派生
+
+```tsx
+const ROLES = ['admin', 'editor', 'viewer'] as const;
+type Role = typeof ROLES[number];   // 'admin' | 'editor' | 'viewer'
+```
+> 用运行时数组派生出联合类型，单一数据源，避免类型和常量两处维护。
+
+---
+
+## 14. 样式的类型化
+
+```tsx
+// 1. 内联样式
+const style: React.CSSProperties = { color: 'red', marginTop: 8 };
+
+// 2. CSS Modules（配 typed-css-modules 或 vite 插件生成 .d.ts）
+import styles from './Card.module.css';   // styles.title 有类型
+
+// 3. styled-components / emotion：给样式组件传 props 类型
+import styled from 'styled-components';
+const Box = styled.div<{ $active: boolean }>`
+  color: ${p => (p.$active ? 'blue' : 'gray')};
+`;
+<Box $active />   // $active 有类型校验
+```
+
+---
+
+## 15. 表单实战：react-hook-form + zod（生产标配）
+
+```tsx
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+
+const schema = z.object({
+  email: z.string().email('邮箱格式错误'),
+  age: z.number().min(18, '需满 18 岁'),
+});
+type FormData = z.infer<typeof schema>;   // 类型从 schema 推导，单一数据源
+
+function SignupForm() {
+  const { register, handleSubmit, formState: { errors } } =
+    useForm<FormData>({ resolver: zodResolver(schema) });
+
+  const onSubmit = (data: FormData) => console.log(data);   // data 已强类型
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <input {...register('email')} />
+      {errors.email && <span>{errors.email.message}</span>}
+      <input type="number" {...register('age', { valueAsNumber: true })} />
+      {errors.age && <span>{errors.age.message}</span>}
+    </form>
+  );
+}
+```
+> **要点**：`z.infer` 让「校验规则」和「TS 类型」同源，改 schema 类型自动跟着变——这是当前 React 表单的主流范式。
+
+---
+
+## 16. 全局状态的类型化
+
+### Zustand（轻量，TS 体验最好）
+
+```tsx
+import { create } from 'zustand';
+
+interface CounterStore {
+  count: number;
+  inc: () => void;
+}
+const useCounter = create<CounterStore>((set) => ({
+  count: 0,
+  inc: () => set((s) => ({ count: s.count + 1 })),
+}));
+
+const count = useCounter((s) => s.count);   // 选择器有类型
+```
+
+### Redux Toolkit（大型项目）
+
+```tsx
+// 定义 RootState / AppDispatch，封装带类型的 hooks
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
+
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
+export const useAppDispatch = () => useDispatch<AppDispatch>();
+```
+> 面试点：RTK 用 `createSlice` 自动推导 action 类型；`ReturnType<typeof store.getState>` 自动派生 RootState，无需手写。
+
+---
+
+## 17. 异步数据请求的类型化（React Query）
+
+```tsx
+import { useQuery } from '@tanstack/react-query';
+
+interface Drama { id: number; title: string }
+
+function useDramas() {
+  return useQuery<Drama[], Error>({           // <数据类型, 错误类型>
+    queryKey: ['dramas'],
+    queryFn: async () => {
+      const res = await fetch('/api/dramas');
+      if (!res.ok) throw new Error('请求失败');
+      return res.json() as Promise<Drama[]>;
+    },
+  });
+}
+
+function List() {
+  const { data, isLoading, error } = useDramas();
+  // data: Drama[] | undefined，isLoading: boolean，error: Error | null —— 全有类型
+  if (isLoading) return <Spinner />;
+  if (error) return <p>{error.message}</p>;
+  return <ul>{data!.map(d => <li key={d.id}>{d.title}</li>)}</ul>;
+}
+```
+> 结合第 6 节的 zod，`queryFn` 里用 `schema.parse(json)` 就能做到「请求 + 运行时校验 + 类型」三合一。
+
+---
+
+## 18. tsconfig 关键配置与常见报错速查
+
+### 推荐的严格配置
+
+```jsonc
+{
+  "compilerOptions": {
+    "strict": true,                    // 一把梭开启所有严格检查
+    "noUncheckedIndexedAccess": true,  // arr[i] 类型带 undefined，逼你判空（强烈推荐）
+    "exactOptionalPropertyTypes": true,
+    "jsx": "react-jsx",                // 新 JSX transform，不用再 import React
+    "moduleResolution": "bundler"
+  }
+}
+```
+
+### 高频报错与解法
+
+| 报错 | 原因 | 解法 |
+|------|------|------|
+| `Object is possibly 'null'` | ref/context 初值为 null | 可选链 `ref.current?.x` 或先判空 |
+| `Type 'string' is not assignable to '"GET"｜"POST"'` | 字面量被拓宽成 string | `as const` 或 `satisfies` |
+| `Property 'x' does not exist on type '{}'` | 空对象/未标注 state | 给 `useState` 写泛型 |
+| `'X' is declared but never read` | 未用变量 | 前缀 `_` 或删除 |
+| `JSX element type ... has no construct/call signatures` | 组件类型不对 | 检查是否误把值当组件 |
+| `Cannot find module './x.css'` | 缺声明文件 | 加 `declare module '*.css'` 到 `.d.ts` |
+
+---
+
+## 19. 对照 Vue：TS 支持差异（你熟 Vue，面试可对比）
 
 | 方面 | Vue 3 + TS | React + TS |
 |------|-----------|-----------|
@@ -302,7 +620,7 @@ type A = ElementOf<string[]>;   // string
 
 ---
 
-## 10. 面试速答清单
+## 20. 面试速答清单
 
 - **`interface` vs `type`**：props/对象用 interface，联合/工具类型用 type。
 - **children 类型**：`React.ReactNode`。
@@ -313,6 +631,14 @@ type A = ElementOf<string[]>;   // string
 - **自定义 hook 返回元组**：加 `as const`。
 - **工具类型**：`Partial/Pick/Omit/Record/ReturnType` 要能张口即来。
 - **运行时安全**：`res.json()` 是 any，生产项目配 zod 做校验 + 类型推导。
+- **扩展原生属性**：`ComponentPropsWithoutRef<'button'>`，取组件 props 用 `ComponentProps<typeof C>`。
+- **多态组件**：泛型 `T extends ElementType` + `ComponentPropsWithoutRef<T>` 实现 `as` prop。
+- **互斥 props**：可辨识联合 + `xxx?: never`。
+- **forwardRef**：`forwardRef<RefType, PropsType>`；命令式方法用 `useImperativeHandle`。
+- **类型守卫**：返回 `x is T` 的谓词函数做收窄。
+- **`satisfies`**：既校验又保留精确字面量推导（vs 注解会拓宽、vs `as` 不校验）。
+- **表单**：react-hook-form + zod，`z.infer` 让校验与类型同源。
+- **tsconfig**：`strict` + `noUncheckedIndexedAccess` 是高质量项目标配。
 
 ---
 
