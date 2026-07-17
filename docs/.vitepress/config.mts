@@ -36,7 +36,9 @@ export default defineConfig({
             { text: 'TikTok小程序·H5改造完整指南', link: '/articles/TikTok小程序-H5改造完整指南' },
             { text: 'TikTok小程序·登录与支付时序详解', link: '/articles/TikTok小程序-登录与支付时序详解' },
             { text: '前端自测指南·从界面到数据库', link: '/articles/前端自测指南-从界面到数据库' },
-            { text: '从一行代码到线上容器·前端视角的运维入门', link: '/articles/从一行代码到线上容器-前端视角的运维入门' }
+            { text: '从一行代码到线上容器·前端视角的运维入门', link: '/articles/从一行代码到线上容器-前端视角的运维入门' },
+            { text: '消息队列与Kafka·前端视角', link: '/articles/消息队列与Kafka-前端视角' },
+            { text: '这套SEO项目的后端全景·前端视角', link: '/articles/这套SEO项目的后端全景-前端视角' }
           ]
         }
       ],
