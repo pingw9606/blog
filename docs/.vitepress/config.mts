@@ -39,7 +39,8 @@ export default defineConfig({
             { text: '从一行代码到线上容器·前端视角的运维入门', link: '/articles/从一行代码到线上容器-前端视角的运维入门' },
             { text: '消息队列与Kafka·前端视角', link: '/articles/消息队列与Kafka-前端视角' },
             { text: '这套SEO项目的后端全景·前端视角', link: '/articles/这套SEO项目的后端全景-前端视角' },
-            { text: '灰度发布·前端视角', link: '/articles/灰度发布-前端视角' }
+            { text: '灰度发布·前端视角', link: '/articles/灰度发布-前端视角' },
+            { text: '看懂DMS里的数据库实例·前端视角', link: '/articles/看懂DMS里的数据库实例-前端视角' }
           ]
         }
       ],
