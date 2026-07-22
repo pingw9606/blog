@@ -42,7 +42,8 @@ export default defineConfig({
             { text: '灰度发布·前端视角', link: '/articles/灰度发布-前端视角' },
             { text: '看懂DMS里的数据库实例·前端视角', link: '/articles/看懂DMS里的数据库实例-前端视角' },
             { text: 'Nacos配置中心·前端视角', link: '/articles/Nacos配置中心-前端视角' },
-            { text: '定时任务与XXL-Job·前端视角', link: '/articles/定时任务与XXL-Job-前端视角' }
+            { text: '定时任务与XXL-Job·前端视角', link: '/articles/定时任务与XXL-Job-前端视角' },
+            { text: '换域名为什么还不通·CNAME/证书/CORS', link: '/articles/换域名为什么还不通-CNAME证书CORS-前端视角' }
           ]
         }
       ],
