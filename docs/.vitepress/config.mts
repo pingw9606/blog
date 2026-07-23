@@ -34,16 +34,7 @@ export default defineConfig({
             { text: 'Kiro规范接入-面试备战', link: '/articles/Kiro规范接入-面试备战' },
             { text: 'AI时代与SDD规范驱动-自学路线', link: '/articles/AI时代与SDD规范驱动-自学路线' },
             { text: 'TikTok小程序·H5改造完整指南', link: '/articles/TikTok小程序-H5改造完整指南' },
-            { text: 'TikTok小程序·登录与支付时序详解', link: '/articles/TikTok小程序-登录与支付时序详解' },
-            { text: '前端自测指南·从界面到数据库', link: '/articles/前端自测指南-从界面到数据库' },
-            { text: '从一行代码到线上容器·前端视角的运维入门', link: '/articles/从一行代码到线上容器-前端视角的运维入门' },
-            { text: '消息队列与Kafka·前端视角', link: '/articles/消息队列与Kafka-前端视角' },
-            { text: '这套SEO项目的后端全景·前端视角', link: '/articles/这套SEO项目的后端全景-前端视角' },
-            { text: '灰度发布·前端视角', link: '/articles/灰度发布-前端视角' },
-            { text: '看懂DMS里的数据库实例·前端视角', link: '/articles/看懂DMS里的数据库实例-前端视角' },
-            { text: 'Nacos配置中心·前端视角', link: '/articles/Nacos配置中心-前端视角' },
-            { text: '定时任务与XXL-Job·前端视角', link: '/articles/定时任务与XXL-Job-前端视角' },
-            { text: '换域名为什么还不通·CNAME/证书/CORS', link: '/articles/换域名为什么还不通-CNAME证书CORS-前端视角' }
+            { text: 'TikTok小程序·登录与支付时序详解', link: '/articles/TikTok小程序-登录与支付时序详解' }
           ]
         }
       ],
@@ -74,6 +65,20 @@ export default defineConfig({
             { text: '08 JVM调优与排查', link: '/backend/08-JVM调优与排查' },
             { text: '09 MySQL索引优化', link: '/backend/09-MySQL索引优化' },
             { text: '10 前端转后端学习路线图', link: '/backend/10-前端转后端学习路线图' }
+          ]
+        },
+        {
+          text: '前端视角 · 后端/运维科普',
+          items: [
+            { text: '这套SEO项目的后端全景·前端视角', link: '/backend/这套SEO项目的后端全景-前端视角' },
+            { text: 'Nacos配置中心·前端视角', link: '/backend/Nacos配置中心-前端视角' },
+            { text: '消息队列与Kafka·前端视角', link: '/backend/消息队列与Kafka-前端视角' },
+            { text: '定时任务与XXL-Job·前端视角', link: '/backend/定时任务与XXL-Job-前端视角' },
+            { text: '灰度发布·前端视角', link: '/backend/灰度发布-前端视角' },
+            { text: '看懂DMS里的数据库实例·前端视角', link: '/backend/看懂DMS里的数据库实例-前端视角' },
+            { text: '换域名为什么还不通·CNAME/证书/CORS', link: '/backend/换域名为什么还不通-CNAME证书CORS-前端视角' },
+            { text: '从一行代码到线上容器·运维入门', link: '/backend/从一行代码到线上容器-前端视角的运维入门' },
+            { text: '前端自测指南·从界面到数据库', link: '/backend/前端自测指南-从界面到数据库' }
           ]
         }
       ],
