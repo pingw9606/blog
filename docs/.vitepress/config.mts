@@ -71,7 +71,9 @@ export default defineConfig({
           text: '前端视角 · 后端/运维科普',
           items: [
             { text: '这套SEO项目的后端全景·前端视角', link: '/backend/这套SEO项目的后端全景-前端视角' },
+            { text: 'SSR/CSR/SSG/ISR 渲染模式·前端视角', link: '/backend/SSR-CSR-SSG-ISR渲染模式-前端视角' },
             { text: 'Kubernetes与Pod·前端视角', link: '/backend/Kubernetes与Pod-前端视角' },
+            { text: '一套代码跑多产品与数据隔离·前端视角', link: '/backend/一套代码跑多产品与数据隔离-前端视角' },
             { text: 'Nacos配置中心·前端视角', link: '/backend/Nacos配置中心-前端视角' },
             { text: '消息队列与Kafka·前端视角', link: '/backend/消息队列与Kafka-前端视角' },
             { text: '定时任务与XXL-Job·前端视角', link: '/backend/定时任务与XXL-Job-前端视角' },
@@ -81,6 +83,7 @@ export default defineConfig({
             { text: '灰度发布·前端视角', link: '/backend/灰度发布-前端视角' },
             { text: '看懂DMS里的数据库实例·前端视角', link: '/backend/看懂DMS里的数据库实例-前端视角' },
             { text: 'Web性能指标与Lighthouse·前端视角', link: '/backend/Web性能指标与Lighthouse-前端视角' },
+            { text: 'CDN内容分发网络·前端视角', link: '/backend/CDN内容分发网络-前端视角' },
             { text: '换域名为什么还不通·CNAME/证书/CORS', link: '/backend/换域名为什么还不通-CNAME证书CORS-前端视角' },
             { text: '从一行代码到线上容器·运维入门', link: '/backend/从一行代码到线上容器-前端视角的运维入门' },
             { text: '前端自测指南·从界面到数据库', link: '/backend/前端自测指南-从界面到数据库' }
