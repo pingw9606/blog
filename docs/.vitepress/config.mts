@@ -71,6 +71,7 @@ export default defineConfig({
           text: '前端视角 · 后端/运维科普',
           items: [
             { text: '这套SEO项目的后端全景·前端视角', link: '/backend/这套SEO项目的后端全景-前端视角' },
+            { text: 'Kubernetes与Pod·前端视角', link: '/backend/Kubernetes与Pod-前端视角' },
             { text: 'Nacos配置中心·前端视角', link: '/backend/Nacos配置中心-前端视角' },
             { text: '消息队列与Kafka·前端视角', link: '/backend/消息队列与Kafka-前端视角' },
             { text: '定时任务与XXL-Job·前端视角', link: '/backend/定时任务与XXL-Job-前端视角' },
