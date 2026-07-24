@@ -23,6 +23,7 @@ export default defineConfig({
       { text: '文章', link: '/articles/React面试学习-对比Vue' },
       { text: 'Agent教程', link: '/agent/00-课程大纲速览' },
       { text: '后端运维笔记', link: '/backend/' },
+      { text: 'MaxLoader实战', link: '/maxloader/' },
       { text: '重构实战', link: '/java-refactor/' },
       { text: '前端面试题', link: '/interview/' },
       { text: 'SSR实战', link: '/ssr/' }
@@ -94,6 +95,20 @@ export default defineConfig({
             { text: '换域名为什么还不通·CNAME/证书/CORS', link: '/backend/换域名为什么还不通-CNAME证书CORS-前端视角' },
             { text: '从一行代码到线上容器·运维入门', link: '/backend/从一行代码到线上容器-前端视角的运维入门' },
             { text: '前端自测指南·从界面到数据库', link: '/backend/前端自测指南-从界面到数据库' }
+          ]
+        }
+      ],
+      '/maxloader/': [
+        {
+          text: 'MaxLoader Electron 实战',
+          items: [
+            { text: '系列总览', link: '/maxloader/' },
+            { text: '01 项目结构与三进程模型', link: '/maxloader/01-项目结构与三进程模型' },
+            { text: '02 登录鉴权与 token 安全存储', link: '/maxloader/02-登录鉴权与token安全存储' },
+            { text: '03 上传队列引擎（断点续传/重试/并发）', link: '/maxloader/03-上传队列引擎' },
+            { text: '04 与内容中台交互', link: '/maxloader/04-与内容中台交互' },
+            { text: '05 配套服务联动', link: '/maxloader/05-配套服务联动' },
+            { text: '06 打包与发版', link: '/maxloader/06-打包与发版' }
           ]
         }
       ],
