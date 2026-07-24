@@ -172,7 +172,9 @@ export default defineConfig({
             { text: '② 数据获取与 SSR', link: '/ssr/nuxt-02-数据获取与SSR' },
             { text: '③ Pinia 状态管理', link: '/ssr/nuxt-03-Pinia状态管理' },
             { text: '④ @nuxtjs/i18n 国际化', link: '/ssr/nuxt-04-i18n国际化' },
-            { text: '⑤ SEO（useHead/hreflang）', link: '/ssr/nuxt-05-SEO' }
+            { text: '⑤ SEO（useHead/hreflang）', link: '/ssr/nuxt-05-SEO' },
+            { text: '⑥ 播放器 xgplayer', link: '/ssr/nuxt-06-播放器xgplayer' },
+            { text: '⑦ Nitro 与部署', link: '/ssr/nuxt-07-Nitro与部署' }
           ]
         },
         {
