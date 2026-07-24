@@ -1,0 +1,33 @@
+/**
+ * 站点主题色：与首页 hero 配图统一为「紫青渐变」
+ * 靛 #6366f1 → 紫 #8b5cf6 → 青 #06b6d4
+ */
+
+:root {
+  /* 品牌主色（链接 / 按钮 / 高亮） */
+  --vp-c-brand-1: #7c3aed;
+  --vp-c-brand-2: #6d28d9;
+  --vp-c-brand-3: #6366f1;
+  --vp-c-brand-soft: rgba(124, 58, 237, 0.14);
+
+  /* 首页 hero 大标题渐变 */
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: linear-gradient(120deg, #6366f1 30%, #06b6d4);
+
+  /* 首页 hero 配图背后的光晕 */
+  --vp-home-hero-image-background-image: linear-gradient(-45deg, #8b5cf6 45%, #06b6d4);
+  --vp-home-hero-image-filter: blur(48px);
+}
+
+.dark {
+  /* 深色模式下主色调亮一点，保证可读性 */
+  --vp-c-brand-1: #a78bfa;
+  --vp-c-brand-2: #8b5cf6;
+  --vp-c-brand-3: #6366f1;
+  --vp-c-brand-soft: rgba(167, 139, 250, 0.16);
+}
+
+/* features 卡片图标底色跟随品牌色调 */
+.VPHome .VPFeature .icon {
+  background-image: linear-gradient(120deg, rgba(99, 102, 241, 0.12), rgba(6, 182, 212, 0.12));
+}
