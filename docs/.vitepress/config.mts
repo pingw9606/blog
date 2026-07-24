@@ -118,7 +118,27 @@ export default defineConfig({
           text: '前端面试题（16 专题）',
           items: [
             { text: '总览', link: '/interview/' },
-            { text: '01 JavaScript（323题）', link: '/interview/01-JavaScript（323题）' },
+            {
+              text: '01 JavaScript（323题）',
+              collapsed: true,
+              items: [
+                { text: '总览', link: '/interview/js/' },
+                { text: '异步与事件循环', link: '/interview/js/01-异步与事件循环' },
+                { text: '框架 React/Vue', link: '/interview/js/02-框架-React-Vue' },
+                { text: '浏览器与DOM', link: '/interview/js/03-浏览器与DOM' },
+                { text: '网络与安全', link: '/interview/js/04-网络与安全' },
+                { text: '工程化与模块', link: '/interview/js/05-工程化与模块' },
+                { text: '手写与编程题', link: '/interview/js/06-手写与编程题' },
+                { text: '原型与继承', link: '/interview/js/07-原型与继承' },
+                { text: '作用域与闭包', link: '/interview/js/08-作用域与闭包' },
+                { text: '数据类型与转换', link: '/interview/js/09-数据类型与转换' },
+                { text: '函数与对象', link: '/interview/js/10-函数与对象' },
+                { text: 'ES语法特性', link: '/interview/js/11-ES语法特性' },
+                { text: 'JS核心与其他（1）', link: '/interview/js/12-JS核心与其他-1' },
+                { text: 'JS核心与其他（2）', link: '/interview/js/13-JS核心与其他-2' },
+                { text: 'JS核心与其他（3）', link: '/interview/js/14-JS核心与其他-3' }
+              ]
+            },
             { text: '02 CSS（61题）', link: '/interview/02-CSS（61题）' },
             { text: '03 HTML（57题）', link: '/interview/03-HTML（57题）' },
             { text: '04 React（83题）', link: '/interview/04-React（83题）' },
@@ -141,7 +161,8 @@ export default defineConfig({
         {
           text: 'SSR 项目实战（Nuxt 3 ↔ Next 16）',
           items: [
-            { text: '课题总览 · 两套SSR对比', link: '/ssr/' }
+            { text: '课题总览 · 两套SSR对比', link: '/ssr/' },
+            { text: '跨栈对比 · 概念映射与复刻方法论', link: '/ssr/跨栈对比-概念映射与复刻方法论' }
           ]
         }
       ]

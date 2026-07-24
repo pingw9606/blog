@@ -4,7 +4,7 @@
 
 ## 专题目录
 
-- [1. JavaScript（323题）](/interview/01-JavaScript（323题）)
+- [1. JavaScript（323题）](/interview/js/)
 - [2. CSS（61题）](/interview/02-CSS（61题）)
 - [3. HTML（57题）](/interview/03-HTML（57题）)
 - [4. React（83题）](/interview/04-React（83题）)
