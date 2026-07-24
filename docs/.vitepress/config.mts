@@ -159,10 +159,17 @@ export default defineConfig({
       ],
       '/ssr/': [
         {
-          text: 'SSR 项目实战（Nuxt 3 ↔ Next 16）',
+          text: 'SSR 项目实战 · 总览',
           items: [
             { text: '课题总览 · 两套SSR对比', link: '/ssr/' },
             { text: '跨栈对比 · 概念映射与复刻方法论', link: '/ssr/跨栈对比-概念映射与复刻方法论' }
+          ]
+        },
+        {
+          text: 'Next 16 新站篇（vibeshort）',
+          items: [
+            { text: '① 项目结构与 App Router', link: '/ssr/next-01-项目结构与AppRouter' },
+            { text: '② 数据获取与 SSR', link: '/ssr/next-02-数据获取与SSR' }
           ]
         }
       ]
