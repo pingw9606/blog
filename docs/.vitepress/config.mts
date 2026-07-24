@@ -70,7 +70,8 @@ export default defineConfig({
             { text: '07 后端查库找问题流程', link: '/backend/07-后端查库找问题流程' },
             { text: '08 JVM调优与排查', link: '/backend/08-JVM调优与排查' },
             { text: '09 MySQL索引优化', link: '/backend/09-MySQL索引优化' },
-            { text: '10 前端转后端学习路线图', link: '/backend/10-前端转后端学习路线图' }
+            { text: '10 前端转后端学习路线图', link: '/backend/10-前端转后端学习路线图' },
+            { text: 'MaxLoader 传剧工具项目全景', link: '/backend/MaxLoader传剧工具项目全景' }
           ]
         },
         {
