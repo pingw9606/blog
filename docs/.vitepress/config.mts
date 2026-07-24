@@ -169,7 +169,9 @@ export default defineConfig({
           text: 'Next 16 新站篇（vibeshort）',
           items: [
             { text: '① 项目结构与 App Router', link: '/ssr/next-01-项目结构与AppRouter' },
-            { text: '② 数据获取与 SSR', link: '/ssr/next-02-数据获取与SSR' }
+            { text: '② 数据获取与 SSR', link: '/ssr/next-02-数据获取与SSR' },
+            { text: '③ Server/Client 组件与状态', link: '/ssr/next-03-Server与Client组件' },
+            { text: '④ next-intl 国际化', link: '/ssr/next-04-next-intl国际化' }
           ]
         }
       ]
