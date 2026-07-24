@@ -162,7 +162,9 @@ export default defineConfig({
           text: 'SSR 项目实战 · 总览',
           items: [
             { text: '课题总览 · 两套SSR对比', link: '/ssr/' },
-            { text: '跨栈对比 · 概念映射与复刻方法论', link: '/ssr/跨栈对比-概念映射与复刻方法论' }
+            { text: '跨栈对比 · 概念映射与复刻方法论', link: '/ssr/跨栈对比-概念映射与复刻方法论' },
+            { text: '跨栈对比 · 取数/SEO/i18n/渲染深度对比', link: '/ssr/跨栈对比-取数SEO渲染深度对比' },
+            { text: '跨栈对比 · 复刻踩坑与经验', link: '/ssr/跨栈对比-复刻踩坑经验' }
           ]
         },
         {
