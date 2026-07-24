@@ -166,6 +166,13 @@ export default defineConfig({
           ]
         },
         {
+          text: 'Nuxt 3 老站篇（shorttv）',
+          items: [
+            { text: '① 项目结构与文件路由', link: '/ssr/nuxt-01-项目结构与文件路由' },
+            { text: '② 数据获取与 SSR', link: '/ssr/nuxt-02-数据获取与SSR' }
+          ]
+        },
+        {
           text: 'Next 16 新站篇（vibeshort）',
           items: [
             { text: '① 项目结构与 App Router', link: '/ssr/next-01-项目结构与AppRouter' },
