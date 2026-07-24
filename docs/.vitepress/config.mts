@@ -5,6 +5,10 @@ export default defineConfig({
   title: 'woody 的博客',
   description: 'woody 的技术学习笔记与实战记录',
   markdown: {
+    // 关闭裸 HTML 解析：正文中未包裹在代码块里的 <tag> 会被转义为文本，
+    // 避免飞书导入文档里大量裸露的 HTML/JSX 标签被 Vue 当作组件解析而报错。
+    // 代码块（``` 与行内 `）内的内容不受影响，正常按代码展示。
+    html: false,
     config(md) {
       // 包裹所有内容为 v-pre，防止 {{ }} 被 Vue 解析
       const defaultRender = md.render.bind(md)
@@ -19,7 +23,9 @@ export default defineConfig({
       { text: '文章', link: '/articles/React面试学习-对比Vue' },
       { text: 'Agent教程', link: '/agent/00-课程大纲速览' },
       { text: '后端运维笔记', link: '/backend/' },
-      { text: '重构实战', link: '/java-refactor/' }
+      { text: '重构实战', link: '/java-refactor/' },
+      { text: '前端面试题', link: '/interview/' },
+      { text: 'SSR实战', link: '/ssr/' }
     ],
     sidebar: {
       '/articles/': [
@@ -104,6 +110,38 @@ export default defineConfig({
             { text: '07 CICD与镜像发布', link: '/java-refactor/07-CICD与镜像发布' },
             { text: '08 HTTPS与上线', link: '/java-refactor/08-HTTPS与上线' },
             { text: '09 老站零影响迁移与灰度切换', link: '/java-refactor/09-老站零影响迁移与灰度切换' }
+          ]
+        }
+      ],
+      '/interview/': [
+        {
+          text: '前端面试题（16 专题）',
+          items: [
+            { text: '总览', link: '/interview/' },
+            { text: '01 JavaScript（323题）', link: '/interview/01-JavaScript（323题）' },
+            { text: '02 CSS（61题）', link: '/interview/02-CSS（61题）' },
+            { text: '03 HTML（57题）', link: '/interview/03-HTML（57题）' },
+            { text: '04 React（83题）', link: '/interview/04-React（83题）' },
+            { text: '05 Vue（80题）', link: '/interview/05-Vue（80题）' },
+            { text: '06 算法（19题）', link: '/interview/06-算法（19题）' },
+            { text: '07 计算机网络（71题）', link: '/interview/07-计算机网络（71题）' },
+            { text: '08 Node.js（27题）', link: '/interview/08-Node.js（27题）' },
+            { text: '09 TypeScript（46题）', link: '/interview/09-TypeScript（46题）' },
+            { text: '10 性能优化（25题）', link: '/interview/10-性能优化（25题）' },
+            { text: '11 前端安全（21题）', link: '/interview/11-前端安全（21题）' },
+            { text: '12 小程序（9题）', link: '/interview/12-小程序（9题）' },
+            { text: '13 ES6（32题）', link: '/interview/13-ES6（32题）' },
+            { text: '14 编程题（50题）', link: '/interview/14-编程题（50题）' },
+            { text: '15 设计模式（7题）', link: '/interview/15-设计模式（7题）' },
+            { text: '16 工程化（34题）', link: '/interview/16-工程化（34题）' }
+          ]
+        }
+      ],
+      '/ssr/': [
+        {
+          text: 'SSR 项目实战（Nuxt 3 ↔ Next 16）',
+          items: [
+            { text: '课题总览 · 两套SSR对比', link: '/ssr/' }
           ]
         }
       ]
