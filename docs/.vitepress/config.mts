@@ -41,7 +41,8 @@ export default defineConfig({
             { text: 'Kiro规范接入-面试备战', link: '/articles/Kiro规范接入-面试备战' },
             { text: 'AI时代与SDD规范驱动-自学路线', link: '/articles/AI时代与SDD规范驱动-自学路线' },
             { text: 'TikTok小程序·H5改造完整指南', link: '/articles/TikTok小程序-H5改造完整指南' },
-            { text: 'TikTok小程序·登录与支付时序详解', link: '/articles/TikTok小程序-登录与支付时序详解' }
+            { text: 'TikTok小程序·登录与支付时序详解', link: '/articles/TikTok小程序-登录与支付时序详解' },
+            { text: '从小说到短剧视频·AI生成平台架构拆解', link: '/articles/从小说到短剧视频-AI生成平台架构拆解' }
           ]
         }
       ],
